@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Three.js Portfolio</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        overflow: hidden;
+        background: #0a0a0a;
+        color: #fff;
+      }
+
+      .container {
+        display: flex;
+        height: 100vh;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 280px;
+        background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+        padding: 20px;
+        overflow-y: auto;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+        z-index: 100;
+      }
+
+      .sidebar-header {
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .sidebar-header h1 {
+        font-size: 24px;
+        margin-bottom: 5px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .sidebar-header p {
+        font-size: 12px;
+        color: #888;
+      }
+
+      /* Project Tabs */
+      .project-tab {
+        padding: 15px;
+        margin-bottom: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+      }
+
+      .project-tab:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateX(5px);
+      }
+
+      .project-tab.active {
+        background: rgba(102, 126, 234, 0.2);
+        border-left-color: #667eea;
+      }
+
+      .project-tab h3 {
+        font-size: 16px;
+        margin-bottom: 5px;
+      }
+
+      .project-tab p {
+        font-size: 12px;
+        color: #aaa;
+      }
+
+      /* Main Content */
+      .content {
+        flex: 1;
+        position: relative;
+        background: #000;
+      }
+
+      .iframe-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+      }
+
+      .iframe-container.active {
+        display: block;
+      }
+
+      .iframe-container iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: #000;
+      }
+
+      /* Welcome Screen */
+      .welcome-screen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        text-align: center;
+        padding: 40px;
+      }
+
+      .welcome-screen.hidden {
+        display: none;
+      }
+
+      .welcome-screen h2 {
+        font-size: 48px;
+        margin-bottom: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .welcome-screen p {
+        font-size: 18px;
+        color: #888;
+        max-width: 600px;
+        line-height: 1.6;
+      }
+
+      .arrow-hint {
+        display: block;
+        margin-top: 20px;
+        font-size: 14px;
+        color: #667eea;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 0.6;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
+      /* Loading Spinner */
+      .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+      }
+
+      .loading-overlay.active {
+        display: flex;
+      }
+
+      .loader {
+        border: 4px solid rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        border-top: 4px solid #667eea;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Scrollbar Styling */
+      .sidebar::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .sidebar::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 3px;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <h1>Three.js Portfolio</h1>
+          <p>Interactive 3D Projects</p>
+        </div>
+
+        <!-- Project Tabs - Add data-path with correct paths -->
+        <div
+          class="project-tab active"
+          data-project="animated-line-art"
+          data-path="projects/animated-line-art/index.html"
+        >
+          <h3>Animated Line Art</h3>
+        </div>
+
+        <div
+          class="project-tab"
+          data-project="Refracting-Noise"
+          data-path="projects/Refracting-Noise/index.html"
+        >
+          <h3>Refracting-Noise</h3>
+        </div>
+
+        <div
+          class="project-tab"
+          data-project="Simple-Particle-Effects"
+          data-path="projects/Simple-Particle-Effects/index.html"
+        >
+          <h3>Simple-Particle-Effects</h3>
+        </div>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="content">
+        <!-- Welcome Screen -->
+        <div id="welcome" class="welcome-screen hidden">
+          <h2>Welcome to Threejs Journey</h2>
+          <p>
+            Explore my Three.js projects using the sidebar navigation. Each
+            project showcases different techniques in 3D web graphics.
+          </p>
+          <span class="arrow-hint">← Select a project to begin</span>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loading" class="loading-overlay">
+          <div class="loader"></div>
+        </div>
+
+        <!-- Project iFrames -->
+        <div id="animated-line-art" class="iframe-container">
+          <!-- iframe will be created dynamically -->
+        </div>
+
+        <div id="Refracting-Noise" class="iframe-container">
+          <!-- iframe will be created dynamically -->
+        </div>
+
+        <div id="Simple-Particle-Effects" class="iframe-container">
+          <!-- iframe will be created dynamically -->
+        </div>
+        <div id="animated-line-art" class="iframe-container">
+          <!-- iframe will be created dynamically -->
+        </div>
+
+        <div id="Refracting-Noise" class="iframe-container">
+          <!-- iframe will be created dynamically -->
+        </div>
+
+        <div id="Simple-Particle-Effects" class="iframe-container">
+          <!-- iframe will be created dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const tabs = document.querySelectorAll(".project-tab");
+      const iframeContainers = document.querySelectorAll(".iframe-container");
+      const welcome = document.getElementById("welcome");
+      const loading = document.getElementById("loading");
+
+      // Track which iframes have been created
+      const iframesCreated = new Set();
+
+      function loadProject(projectId, projectPath) {
+        // Hide welcome
+        welcome.classList.add("hidden");
+
+        // Hide all containers
+        iframeContainers.forEach((container) => {
+          container.classList.remove("active");
+        });
+
+        // Show loading
+        loading.classList.add("active");
+
+        // Get the container
+        const container = document.getElementById(projectId);
+
+        if (container) {
+          // Create iframe if it doesn't exist yet
+          if (!iframesCreated.has(projectId)) {
+            const iframe = document.createElement("iframe");
+            iframe.src = projectPath;
+            iframe.setAttribute(
+              "allow",
+              "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
+            );
+            iframe.setAttribute("allowfullscreen", "");
+
+            // Handle iframe load
+            iframe.onload = function () {
+              loading.classList.remove("active");
+            };
+
+            // Handle iframe error
+            iframe.onerror = function () {
+              loading.classList.remove("active");
+              console.error("Failed to load:", projectPath);
+            };
+
+            container.appendChild(iframe);
+            iframesCreated.add(projectId);
+
+            // Hide loading after a short delay even if onload doesn't fire
+            setTimeout(() => {
+              loading.classList.remove("active");
+            }, 1500);
+          } else {
+            // Iframe already exists, just hide loading
+            setTimeout(() => {
+              loading.classList.remove("active");
+            }, 300);
+          }
+
+          // Show the container
+          container.classList.add("active");
+        }
+      }
+
+      // Add click handlers to tabs
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const projectId = tab.getAttribute("data-project");
+          const projectPath = tab.getAttribute("data-path");
+
+          // Update active tab
+          tabs.forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+
+          // Load the project
+          loadProject(projectId, projectPath);
+        });
+      });
+
+      // Auto-load first project on page load
+      window.addEventListener("load", () => {
+        // Small delay to ensure everything is ready
+        setTimeout(() => {
+          if (tabs.length > 0) {
+            const firstTab = tabs[0];
+            const projectId = firstTab.getAttribute("data-project");
+            const projectPath = firstTab.getAttribute("data-path");
+            loadProject(projectId, projectPath);
+          }
+        }, 100);
+      });
+    </script>
+  </body>
+</html>
